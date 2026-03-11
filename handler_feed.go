@@ -6,9 +6,11 @@ import (
 )
 
 
-func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
+		URL string `json:"url"`
+
 	}
 	decoder := json.NewDecoder(r.Body);
 	decoder.Decode();
@@ -20,11 +22,13 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 		return;
 	}
 
-	user, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams{
+	feed, err := apiCfg.DB.CreateFeed(r.Context(), database.CreateFeedParams{
 		ID: uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedA: time.Now().UTC(),
 		Name: params.Name,
+		Url: params.URL,
+		UserID: feed.ID,
 	});
 
 	if err != nil {
@@ -32,12 +36,13 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 		return;
 	}
 
-	respondWithJson(w, 201, databaseUserToUser(user));
+	respondWithJson(w, 201, feed);
 
 }
 
-func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, database.User) {
-	respondWithJson(w, 200, databaseUserToUser(user));
+func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, feed database.Feed) {
+	respondWithJson(w, 200, databaseFeedToFeed(feed));
 }
+
 
 
