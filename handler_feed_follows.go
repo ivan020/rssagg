@@ -50,4 +50,27 @@ func (apiCfg *apiConfig) handlerGetFeedFollows(w http.ResponseWriter, r *http.Re
 	respondWithJson(w, 201, databaseFeedFollowsToFeedFollows( feedFollows ));
 }
 
+func (apiCfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+
+	feedFollowIDStr := chi.URLParam(r, "feedFollowID");
+	feedFollowID, err := uuid.Parse(feedFollowIDStr);
+
+	if err != nil {
+		respondWithJson(w, 400, fmt.Sprintf("Couldn't parse the feed follow id:", err));
+		return;
+	}
+
+	err = apiCfg.DB.DeleteFeedFollow(r.Context(), database.DeleteFeedFollowParams{
+		ID: feedFollowID,
+		UserID: user.ID,
+	})
+	
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Couldn't delete feed follow:", err));
+		return;
+	}
+
+	respondWithJson(w, 200, struct{}{});
+}
+
 
