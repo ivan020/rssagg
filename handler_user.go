@@ -42,8 +42,8 @@ func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, 
 
 func (apiCfg *apiConfig) handlerGetPostsForUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	posts, err := apiCfg.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
-		user.ID,
-		10,
+		UserID: user.ID,
+		limit: 10,
 	});
 
 	if err != nil {
@@ -51,6 +51,7 @@ func (apiCfg *apiConfig) handlerGetPostsForUser(w http.ResponseWriter, r *http.R
 		return;
 	}
 
+	respondWithJson(w, 200, datbasePostsToPosts(posts));
 
 }
 
