@@ -17,6 +17,7 @@ type apiConfig struct {
 }
 
 func main() {
+
 	godotenv.Load(".env");
 
 	portString := os.Getenv("PORT");
@@ -35,9 +36,17 @@ func main() {
 		log.Fatal("Can't connect to the database");
 	}
 
+
+	db := database.New(conn);
 	apiCfg := apiConfig{
 		DB: database.New(conn),
 	}
+
+	go startScraping(
+		DB: db, 
+		10, 
+		time.Minute,
+	)
 
 	router := chi.NewRouter();
 
